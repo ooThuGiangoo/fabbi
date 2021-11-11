@@ -1,8 +1,6 @@
 from django.db import models
 from django.db.models.base import Model
 from django.db.models.fields import SmallIntegerField
-# from User.models import Clients
-# from User.models import Users
 
 # Create your models here.
 class Events(models.Model) : 
@@ -16,7 +14,7 @@ class Events(models.Model) :
         (0 , 'Not archived'),
         (1 , 'Archived'))
     event_id = models.IntegerField(primary_key=True)
-    client_id = models.ForeignKey("User.Clients", on_delete=models.CASCADE)
+    client_id = models.ForeignKey("User.Client", on_delete=models.CASCADE)
     type = models.IntegerField(choices = choice_type)
     title = models.CharField(max_length=255)
     body = models.TextField()
@@ -31,7 +29,7 @@ class Events(models.Model) :
 
 class Event_authorized_user(models.Model):
     event_id = models.IntegerField(primary_key=True)
-    user_id = models.ForeignKey("User.Users", on_delete=models.CASCADE)
+    user_id = models.ForeignKey("User.User", on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add = True)
     updated_at = models.DateTimeField(auto_now = True)
     
@@ -99,7 +97,7 @@ class Ticket_purchase_revervation (models.Model) :
         (1, 'Purchased')
     )
     id = models.IntegerField(primary_key=True)
-    user_id = models.ForeignKey("User.Users", on_delete=models.CASCADE)
+    user_id = models.ForeignKey("User.User", on_delete=models.CASCADE)
     ticket_id = models.ForeignKey(Ticket, on_delete=models.CASCADE)
     order_id = models.CharField(max_length=255, null=True)
     number_of_tickets = models.IntegerField()
@@ -153,207 +151,19 @@ class Ticket_purchase_history(models.Model) :
     def __str__(self):
         return self.order_id
 
-class Gift(models.Model) :
-    gift_id = models.IntegerField(primary_key=True)
-    client_id = models.ForeignKey("User.Clients", on_delete= models.CASCADE)
-    name = models.CharField(max_length=255)
-    points_spent = models.DecimalField(max_digits=15, decimal_places=0)
-    image_url = models.CharField(max_length=255)
-    display_order = models.SmallIntegerField()
-    created_at = models.DateTimeField(auto_now_add = True)
-    updated_at = models.DateTimeField(auto_now = True)
-    
-    def __str__(self):
-        return self.name
-
-class User_gift(models.Model):
-    choice_status= (
-        (0 , 'Unused'),
-        (1 , 'Used'))
-    user_gift_id = models.IntegerField(primary_key=True)
-    user_id = models.ForeignKey("User.Users", on_delete=models.CASCADE)
-    gift_id = models.ForeignKey(Gift, on_delete=models.CASCADE)
-    status = models.IntegerField(choices= choice_status, default = 1)
-    used_at = models.DateTimeField(null=True, auto_now_add=True)        
-    created_at = models.DateTimeField(null=False, auto_now_add = True)
-    updated_at = models.DateTimeField(null=False, auto_now = True)
-
-
-class User_point(models.Model) :
-    choice_type = (
-        (1 , 'Deposit'),
-        (2 , 'Withdrawal'))
-    choice_withdrawal = (
-        (1 , 'Exchange for a gift'),
-        (2 , 'Exchange for a ticket'))
-    choice_deposit = (
-        (1 , 'Purchase'),)
-    user_point_id = models.IntegerField(primary_key=True)
-    user_id = models.ForeignKey("User.Users", on_delete=models.CASCADE)
-    type = models.IntegerField(choices=choice_type, default = 1)
-    deposit_reason = models.IntegerField(null = True, choices=choice_deposit)        
-    withdrawal_reason = models.IntegerField(null = True, choices=choice_withdrawal)        
-    points = models.DecimalField(max_digits=15, decimal_places=0)
-    transacted_at = models.DateTimeField(auto_now_add=True)
-    points_balance = models.DecimalField(max_digits=15, decimal_places=0)
-    created_at = models.DateTimeField(null=False, auto_now_add = True)
-    updated_at = models.DateTimeField(null=False, auto_now = True)
-
-class Box_notification_trans_content(models.Model) :
-    choice_type = (
-       (1,'Host user'), 
-        (2, 'Client user (Mgmt portal user)'),
-        (3, 'System admin user( Mgmt portal user)'))
-    choice_deliver = (
-        (0 , 'Not delivered'),
-        (1 , 'Delivered') )
-    box_notification_trans_content_id = models.IntegerField(primary_key= True)
-    client_id = models.ForeignKey("User.Clients", on_delete=models.CASCADE)
-    from_type = models.IntegerField(choices=choice_type, default=1)
-    from_user_id = models.IntegerField(null=True)
-    title = models.CharField(max_length=255)
-    body = models.TextField()
-    to_user_ids = models.TextField(null=True)
-    scheduled_at = models.DateTimeField(auto_now_add=True) 
-    is_delivered = models.IntegerField(choices=choice_deliver)
-    delivered_at = models.DateTimeField(auto_now_add = True)
-    created_at = models.DateTimeField(auto_now_add = True)
-    updated_at = models.DateTimeField(auto_now = True)
-    
-    def __str__(self):
-        return self.title
-
-class Box_notification_master_content (models.Model):
-    box_notification_master_content_id = models.IntegerField(primary_key=True)
-    client_id = models.ForeignKey("User.Clients", on_delete=models.CASCADE)
-    timing_type = models.SmallIntegerField()
-    title = models.CharField(max_length=255)
-    body = models.TextField()
-    memo = models.CharField(max_length=255, null=True)
-    created_at = models.DateTimeField(auto_now_add = True)
-    updated_at = models.DateTimeField(auto_now = True)
-    
-    def __str__(self):
-        return self.title
-
-
-class Box_notification(models.Model):
-    choice_read =(
-        (0, 'Not read'),
-        (1, 'Read')
+class Drawing (models.Model):
+    choice_elect = (
+        (0,'Not elected'),
+        (1, 'Elected')
     )
-    id = models.IntegerField(primary_key=True)
-    user_id = models.ForeignKey("User.Users", on_delete=models.CASCADE) 
-    box_notification_master_content_id = models.ForeignKey(Box_notification_master_content, on_delete=models.SET_NULL, null=True) 
-    box_notification_trans_content_id = models.ForeignKey(Box_notification_trans_content, on_delete=models.SET_NULL, null=True) 
-    is_read = models.SmallIntegerField(choices=choice_read, default=1)
-    read_at = models.DateTimeField(auto_now_add = True, null=True)
+    choice_purchase = (
+        (0, 'Not purchased'),
+        (1, 'Purchased')
+    )
+    ticket_id = models.IntegerField(primary_key=True)
+    user_id = models.ForeignKey("User.User", on_delete=models.CASCADE)
+    is_elected = models.SmallIntegerField(choices=choice_elect, default=1)
+    is_purchased = models.SmallIntegerField(choices=choice_purchase, default=1)
     created_at = models.DateTimeField(auto_now_add = True)
     updated_at = models.DateTimeField(auto_now = True)
-
-class Gift_purchase_history (models.Model):
-    id = models.IntegerField(primary_key=True)
-    user_gift_id = models.ForeignKey(User_gift, on_delete=models.CASCADE)
-    user_point_id = models.ForeignKey(User_point, on_delete=models.CASCADE)
-    points_spent = models.DecimalField(max_digits=15, decimal_places=0)
-    purchased_at = models.DateTimeField(null=False, auto_now_add = True)
-    created_at = models.DateTimeField(null=False, auto_now_add = True)
-    updated_at = models.DateTimeField(null=False, auto_now = True)    
-
-class Gift_tipping_history(models.Model) :
-    id = models.IntegerField(primary_key=True)
-    user_gift_id = models.ForeignKey(User_gift, on_delete=models.CASCADE)
-    to_user_id = models.ForeignKey(Box_notification_trans_content, on_delete=models.CASCADE)
-    points_equivalent = models.DecimalField(max_digits=15, decimal_places=0)
-    tipped_at = models.DateTimeField(null=False, auto_now_add = True)
-    created_at = models.DateTimeField(null=False, auto_now_add = True)
-    updated_at = models.DateTimeField(null=False, auto_now = True)    
-
-class Stamps_code(models.Model):
-    stamp_code_id = models.IntegerField(primary_key=True)
-    client_id = models.ForeignKey("User.Clients", on_delete=models.CASCADE)
-    name = models.CharField(max_length=255)
-    code = models.CharField(max_length=6)
-    stamps_granted = models.DecimalField(max_digits=15, decimal_places=0)
-    number_of_applicable_user = models.IntegerField(null=True)
-    number_of_applied_user = models.IntegerField()
-    expires_in = models.DateTimeField(null=False, auto_now_add = True)
-    created_at = models.DateTimeField(null=False, auto_now_add = True)
-    updated_at = models.DateTimeField(null=False, auto_now = True) 
-
-    def __str__(self):
-        return self.name
-
-class Ranking(models.Model):
-    choice_type = (
-        (1, 'Tipping'),
-        (2, 'Tipped')
-    )
-    ranking_id = models.IntegerField(primary_key=True)
-    client_id = models.ForeignKey("User.Clients", on_delete=models.CASCADE)
-    type = models.SmallIntegerField(choices=choice_type, default=1)  
-    start_date = models.DateField(auto_now_add=True)
-    end_date = models.DateField(auto_now_add=True)
-    created_at = models.DateTimeField(null=False, auto_now_add = True)
-    updated_at = models.DateTimeField(null=False, auto_now = True) 
-
-    
-
-class Email_notification_master_content(models.Model):
-    choice_timing = (
-        (1, 'When a drawing winner is determined'),
-        (2, 'When tickets purchase is complete'),
-        (99, 'Any timing (Templates for mgmt portal)')
-    )
-    email_notification_master_content_id = models.IntegerField(primary_key=True)
-    client_id = models.ForeignKey("User.Clients", on_delete=models.CASCADE)
-    timing_type = SmallIntegerField(choices=choice_timing, default=1)
-    title = models.CharField(max_length=255)
-    body = models.TextField()
-    memo = models.CharField(max_length=255, null=True)
-    created_at = models.DateTimeField(null=False, auto_now_add = True)
-    updated_at = models.DateTimeField(null=False, auto_now = True)
-
-    def __str__(self):
-        return self.title
-
-
-class Email_notification_trans_content(models.Model):
-    choice_deliver = (
-        (0, 'Not delivered'),
-        (1, 'Delivered')
-    )
-    email_notification_trans_content_id = models.IntegerField(primary_key=True)
-    client_id = models.ForeignKey("User.Clients", on_delete=models.CASCADE)
-    title = models.CharField(max_length=255)
-    body = models.TextField()
-    to_user_ids = models.TextField(null=True)
-    scheduled_at = models.DateTimeField(auto_now_add = True)
-    is_delivered = models.SmallIntegerField(choices=choice_deliver, default=1)
-    delivered_at = models.DateTimeField(null=True, auto_now_add = True)
-    created_at = models.DateTimeField(auto_now_add = True)
-    updated_at = models.DateTimeField(auto_now = True)
-
-    def __str__(self):
-        return self.title
-
-class Email_notification(models.Model) :
-    choice_status = (
-        (0, 'Not sent'),
-        (1, 'Sent'),
-        (2, 'Error')
-    )
-    id = models.BigIntegerField(primary_key=True)
-    to_email = models.CharField(max_length=254)
-    title = models.CharField(max_length=254)
-    body = models.TextField()
-    scheduled_at = models.DateTimeField(auto_now_add = True)
-    status = models.SmallIntegerField(choices=choice_status, default=1)
-    sent_at = models.DateTimeField(null=True, auto_now_add = True)
-    created_at = models.DateTimeField(auto_now_add = True)
-    updated_at = models.DateTimeField(auto_now = True)
-
-    def __str__(self):
-        return self.title
-
 

@@ -1,7 +1,7 @@
 from django.db import models
 from django.db.models.expressions import Value
 from django.contrib.auth.models import User
-from User.models import Users
+from User.models import User
 
 
 # Create your models here.
@@ -46,7 +46,7 @@ class Live_stream(models.Model) :
 
 class Live_stream_viewer(models.Model) :
     live_stream_id = models.IntegerField(primary_key=True)       
-    user_id = models.ForeignKey(Users, on_delete=models.CASCADE)       
+    user_id = models.ForeignKey(User, on_delete=models.CASCADE)       
     viewed_at = models.DateTimeField(auto_now_add=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

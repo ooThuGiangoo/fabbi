@@ -40,9 +40,9 @@ INSTALLED_APPS = [
     'rest_framework',
     'User',
     'Livestream',
-    'demo',
     'Event',
     'MasterData',
+    'Point',
 ]
 
 MIDDLEWARE = [

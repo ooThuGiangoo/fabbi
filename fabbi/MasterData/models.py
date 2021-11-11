@@ -1,33 +1,11 @@
 from django.db import models
 from django.db.models.fields import IntegerField
-from Event.models import Ranking
 
 # Create your models here.
-class Drawing (models.Model):
-    choice_elect = (
-        (0,'Not elected'),
-        (1, 'Elected')
-    )
-    choice_purchase = (
-        (0, 'Not purchased'),
-        (1, 'Purchased')
-    )
-    ticket_id = models.IntegerField(primary_key=True)
-    user_id = models.ForeignKey("User.Users", on_delete=models.CASCADE)
-    is_elected = models.SmallIntegerField(choices=choice_elect, default=1)
-    is_purchased = models.SmallIntegerField(choices=choice_purchase, default=1)
-    created_at = models.DateTimeField(auto_now_add = True)
-    updated_at = models.DateTimeField(auto_now = True)
-
-class Follow(models.Model):
-    from_user_id = models.IntegerField()  
-    to_user_id = models.IntegerField(primary_key=True)
-    created_at = models.DateTimeField(auto_now_add = True)
-    updated_at = models.DateTimeField(auto_now = True)
 
 class Stamp_receipt_history(models.Model):
-    id = models.IntegerField(primary_key=True)
-    user_stamp_id = models.ForeignKey("User.User_stamp", on_delete=models.CASCADE)
+    id = models.AutoField(primary_key=True)
+    user_stamp_id = models.ForeignKey("Point.User_stamp", on_delete=models.CASCADE)
     live_stream_id = models.IntegerField(null=True)    
     stamp_code_id = models.IntegerField(null=True)
     received_at = models.DateTimeField(auto_now_add = True)
@@ -39,34 +17,34 @@ class Stamp_spending_history(models.Model):
     choice_spend = (
         (1, 'Ticket'),
     )
-    id = models.IntegerField(primary_key=True)
-    user_stamp_id = models.ForeignKey("User.User_stamp", on_delete=models.CASCADE)
+    id = models.AutoField(primary_key=True)
+    user_stamp_id = models.ForeignKey("Point.User_stamp", on_delete=models.CASCADE)
     spent_for = models.SmallIntegerField(choices=choice_spend, default=1)
     stamp_code_id = models.IntegerField(null=True)
     spent_at = models.DateTimeField(auto_now_add = True)
     created_at = models.DateTimeField(auto_now_add = True)
     updated_at = models.DateTimeField(auto_now = True)
 
-class Ranking_summary(models.Model):
-    id = models.BigIntegerField(primary_key=True)
-    ranking_id = models.ForeignKey(Ranking, on_delete=models.CASCADE)
-    user_id = models.ForeignKey("User.Users"  , on_delete=models.CASCADE)
-    amount = models.DecimalField(max_digits=15, decimal_places=0)
-    target_date = models.DateField(auto_now_add=True)
-    created_at = models.DateTimeField(auto_now_add = True)
-    updated_at = models.DateTimeField(auto_now = True)
 
 class Additional_profile_item(models.Model):
-    additional_profile_item_id = models.IntegerField(primary_key=True)
+    additional_profile_item_id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=255)
     display_order = models.SmallIntegerField()
     created_at = models.DateTimeField(auto_now_add = True)
     updated_at = models.DateTimeField(auto_now = True)
 
 class Push_notification_master_content (models.Model):
-    push_notification_master_content_id = models.IntegerField(primary_key=True)
-    client_id = models.ForeignKey("User.Clients", on_delete=models.CASCADE)
-    timing_type = models.SmallIntegerField()
+    choice_timing = (
+        (1, 'When a livestream event is created'),
+        (2, 'When an office event is created'),
+        (3, 'When a drawing winner determined'),
+        (4, 'When a livestream starts in 10 minutes'),
+        (5, 'When tickets purchase is complete'),
+        (99, 'Any timing')
+    )
+    push_notification_master_content_id = models.AutoField(primary_key=True)
+    client_id = models.ForeignKey("User.Client", on_delete=models.CASCADE)
+    timing_type = models.SmallIntegerField(choices=choice_timing, default=1)
     title = models.CharField(max_length=255, null=True)
     body = models.TextField()
     internal_url = models.CharField(max_length=255, null=True)
@@ -75,14 +53,14 @@ class Push_notification_master_content (models.Model):
     updated_at = models.DateTimeField(auto_now = True)
     
     def __str__(self):
-        return self.title
+        return self.body 
 
 class Push_notification_trans_content(models.Model) :
     choice_deliver = (
         (0 , 'Not delivered'),
         (1 , 'Delivered') )
-    push_notification_trans_content_id = models.IntegerField(primary_key= True)
-    client_id = models.ForeignKey("User.Clients", on_delete=models.CASCADE)
+    push_notification_trans_content_id = models.AutoField(primary_key= True)
+    client_id = models.ForeignKey("User.Client", on_delete=models.CASCADE)
     title = models.CharField(max_length=255, null=True)
     body = models.TextField()
     internal_url = models.CharField(max_length=255, null=True)
@@ -105,8 +83,8 @@ class Push_notification(models.Model):
         (0, 'Not sent'),
         (1, 'Sent')
     )
-    id = models.IntegerField(primary_key=True)
-    user_id = models.ForeignKey("User.Users", on_delete=models.CASCADE) 
+    id = models.AutoField(primary_key=True)
+    user_id = models.ForeignKey("User.User", on_delete=models.CASCADE) 
     to_platform = models.SmallIntegerField(choices=choice_platform, default=1)
     title = models.CharField(max_length=255, null=True)
     body = models.TextField()
@@ -118,7 +96,7 @@ class Push_notification(models.Model):
     updated_at = models.DateTimeField(auto_now = True)       
 
 class Sent_relation(models.Model):
-    id = models.IntegerField(primary_key=True)
+    id = models.AutoField(primary_key=True)
     event_id = models,IntegerField(null=True)
     live_stream_id = models.IntegerField(null=True)
     email_notification_trans_content_id  = models.IntegerField(null=True)
@@ -132,7 +110,7 @@ class Email_auth(models.Model):
         (2,'Host user'),
         (3,'Mgmt portal user')
     )
-    id = models.IntegerField(primary_key=True)
+    id = models.AutoField(primary_key=True)
     user_type = models.SmallIntegerField(choices=choice_type, default=1)
     email = models.CharField(max_length=254)
     token = models.CharField(max_length=255)
@@ -146,7 +124,7 @@ class Password_reset(models.Model):
         (2,'Host user'),
         (3,'Mgmt portal user')
     )
-    id = models.IntegerField(primary_key=True)
+    id = models.AutoField(primary_key=True)
     user_type = models.SmallIntegerField(choices=choice_type, default=1)
     email = models.CharField(max_length=254)
     token = models.CharField(max_length=255)
@@ -159,7 +137,7 @@ class Refresh_token(models.Model):
         (0,'Not blacklisted'),
         (2,'Blacklisted')
     )
-    refresh_token_id = models.BigIntegerField(primary_key=True)
+    refresh_token_id = models.BigAutoField(primary_key=True)
     user_id = models.IntegerField(null=True)
     mgmt_portal_user_id = models.IntegerField(null=True)
     encrypted_refresh_token = models.CharField(max_length=255)
@@ -174,7 +152,7 @@ class Device_token(models.Model):
         (1,'IOS'),
         (2,'Android')
     )
-    id = models.IntegerField(primary_key=True)
+    id = models.AutoField(primary_key=True)
     user_id = models.IntegerField() 
     platform = models.SmallIntegerField(choices=choice_platform, default=1)
     title = models.CharField(max_length=255, null=True)
@@ -186,9 +164,10 @@ class Device_token(models.Model):
     def __str__(self):
         return self.title
 
+
 class Related_link(models.Model) :
-    id = models.IntegerField(primary_key=True)
-    client_id = models.ForeignKey("User.Clients", on_delete=models.CASCADE)
+    id = models.AutoField(primary_key=True)
+    client_id = models.ForeignKey("User.Client", on_delete=models.CASCADE)
     title = models.CharField(max_length=255)
     link_url = models.CharField(max_length=255)
     file_name = models.CharField(max_length=255)
@@ -201,3 +180,130 @@ class Related_link(models.Model) :
     def __str__(self):
         return self.title
 
+
+class Email_notification_master_content (models.Model):
+    choice_timing = (
+        (1, 'When a drawing winner determined'),
+        (2, 'When tickets purchase is complete'),
+        (99, 'Any timing')
+    )
+    email_notification_master_content_id = models.AutoField(primary_key=True)
+    client_id = models.ForeignKey("User.Client", on_delete=models.CASCADE)
+    timing_type = models.SmallIntegerField(choices=choice_timing, default=1)
+    title = models.CharField(max_length=255, null=True)
+    body = models.TextField()
+    memo = models.CharField(max_length=255, null=True)
+    created_at = models.DateTimeField(auto_now_add = True)
+    updated_at = models.DateTimeField(auto_now = True)
+    
+    def __str__(self):
+        return self.title        
+
+class Email_notification_trans_content(models.Model):
+    choice_deliver = (
+        (0, 'Not delivered'),
+        (1, 'Delivered')
+    )
+    email_notification_trans_content_id = models.IntegerField(primary_key=True)
+    client_id = models.ForeignKey("User.Client", on_delete=models.CASCADE)
+    title = models.CharField(max_length=255)
+    body = models.TextField()
+    to_user_ids = models.TextField(null=True)
+    scheduled_at = models.DateTimeField(auto_now_add = True)
+    is_delivered = models.SmallIntegerField(choices=choice_deliver, default=1)
+    delivered_at = models.DateTimeField(null=True, auto_now_add = True)
+    created_at = models.DateTimeField(auto_now_add = True)
+    updated_at = models.DateTimeField(auto_now = True)
+
+    def __str__(self):
+        return self.title
+
+class Email_notification(models.Model) :
+    choice_status = (
+        (0, 'Not sent'),
+        (1, 'Sent'),
+        (2, 'Error')
+    )
+    id = models.BigIntegerField(primary_key=True)
+    to_email = models.CharField(max_length=254)
+    title = models.CharField(max_length=254)
+    body = models.TextField()
+    scheduled_at = models.DateTimeField(auto_now_add = True)
+    status = models.SmallIntegerField(choices=choice_status, default=1)
+    sent_at = models.DateTimeField(null=True, auto_now_add = True)
+    created_at = models.DateTimeField(auto_now_add = True)
+    updated_at = models.DateTimeField(auto_now = True)
+
+    def __str__(self):
+        return self.title
+
+
+class Box_notification_trans_content(models.Model) :
+    choice_type = (
+       (1,'Host user'), 
+        (2, 'Client user (Mgmt portal user)'),
+        (3, 'System admin user( Mgmt portal user)'))
+    choice_deliver = (
+        (0 , 'Not delivered'),
+        (1 , 'Delivered') )
+    box_notification_trans_content_id = models.IntegerField(primary_key= True)
+    client_id = models.ForeignKey("User.Client", on_delete=models.CASCADE)
+    from_type = models.IntegerField(choices=choice_type, default=1)
+    from_user_id = models.IntegerField(null=True)
+    title = models.CharField(max_length=255)
+    body = models.TextField()
+    to_user_ids = models.TextField(null=True)
+    scheduled_at = models.DateTimeField(auto_now_add=True) 
+    is_delivered = models.IntegerField(choices=choice_deliver)
+    delivered_at = models.DateTimeField(auto_now_add = True)
+    created_at = models.DateTimeField(auto_now_add = True)
+    updated_at = models.DateTimeField(auto_now = True)
+    
+    def __str__(self):
+        return self.title
+
+class Box_notification_master_content (models.Model):
+    choice_timing = (
+        (99, 'Any timing'),
+    )
+    box_notification_master_content_id = models.IntegerField(primary_key=True)
+    client_id = models.ForeignKey("User.Client", on_delete=models.CASCADE)
+    timing_type = models.SmallIntegerField(choices=choice_timing, default=99)
+    title = models.CharField(max_length=255)
+    body = models.TextField()
+    memo = models.CharField(max_length=255, null=True)
+    created_at = models.DateTimeField(auto_now_add = True)
+    updated_at = models.DateTimeField(auto_now = True)
+    
+    def __str__(self):
+        return self.title
+
+
+class Box_notification(models.Model):
+    choice_read =(
+        (0, 'Not read'),
+        (1, 'Read')
+    )
+    id = models.IntegerField(primary_key=True)
+    user_id = models.ForeignKey("User.User", on_delete=models.CASCADE) 
+    box_notification_master_content_id = models.ForeignKey(Box_notification_master_content, on_delete=models.SET_NULL, null=True) 
+    box_notification_trans_content_id = models.ForeignKey(Box_notification_trans_content, on_delete=models.SET_NULL, null=True) 
+    is_read = models.SmallIntegerField(choices=choice_read, default=1)
+    read_at = models.DateTimeField(auto_now_add = True, null=True)
+    created_at = models.DateTimeField(auto_now_add = True)
+    updated_at = models.DateTimeField(auto_now = True)
+
+
+class Prefectures(models.Model):
+    choice_default = (
+        (0 , 'Not default'),
+        (1 , 'Default') )
+    prefecture_id = models.IntegerField(primary_key=True)
+    name = models.CharField(max_length=45, null=False)
+    display_order = models.SmallIntegerField(null=False)
+    is_default = models.SmallIntegerField(null=False, choices=choice_default)
+    created_at = models.DateTimeField(null=False, auto_now_add = True)
+    updated_at = models.DateTimeField(null=False, auto_now = True)
+
+    def __str__(self):
+        return self.name    
