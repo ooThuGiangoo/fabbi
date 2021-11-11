@@ -2,7 +2,7 @@ from django.db import models
 from django.db.models.base import Model
 from django.db.models.deletion import CASCADE
 from Event.models import Box_notification_trans_content
-from demo.models import Additional_profile_item
+from MasterData.models import Additional_profile_item
 
 # Create your models here.
 class Clients(models.Model):
@@ -126,7 +126,7 @@ class Image_paths(models.Model):
         return self.file_name
 
 
-class User_stamps(models.Model) :
+class User_stamp(models.Model) :
     choice_type=(
         (1 , 'Deposit'),
         (2 , 'Withdrawal'))

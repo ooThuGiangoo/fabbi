@@ -1,9 +1,6 @@
 from django.db import models
 from django.db.models.fields import IntegerField
-from User.models import Users, User_stamps
 from Event.models import Ranking
-from fabbi.Event.models import Email_notification_trans_contents
-from fabbi.User.models import Clients
 
 # Create your models here.
 class Drawing (models.Model):
@@ -16,7 +13,7 @@ class Drawing (models.Model):
         (1, 'Purchased')
     )
     ticket_id = models.IntegerField(primary_key=True)
-    user_id = models.ForeignKey(Users, on_delete=models.CASCADE)
+    user_id = models.ForeignKey("User.Users", on_delete=models.CASCADE)
     is_elected = models.SmallIntegerField(choices=choice_elect, default=1)
     is_purchased = models.SmallIntegerField(choices=choice_purchase, default=1)
     created_at = models.DateTimeField(auto_now_add = True)
@@ -30,7 +27,7 @@ class Follow(models.Model):
 
 class Stamp_receipt_history(models.Model):
     id = models.IntegerField(primary_key=True)
-    user_stamp_id = models.ForeignKey(User_stamps, on_delete=models.CASCADE)
+    user_stamp_id = models.ForeignKey("User.User_stamp", on_delete=models.CASCADE)
     live_stream_id = models.IntegerField(null=True)    
     stamp_code_id = models.IntegerField(null=True)
     received_at = models.DateTimeField(auto_now_add = True)
@@ -43,7 +40,7 @@ class Stamp_spending_history(models.Model):
         (1, 'Ticket'),
     )
     id = models.IntegerField(primary_key=True)
-    user_stamp_id = models.ForeignKey(User_stamps, on_delete=models.CASCADE)
+    user_stamp_id = models.ForeignKey("User.User_stamp", on_delete=models.CASCADE)
     spent_for = models.SmallIntegerField(choices=choice_spend, default=1)
     stamp_code_id = models.IntegerField(null=True)
     spent_at = models.DateTimeField(auto_now_add = True)
@@ -53,14 +50,14 @@ class Stamp_spending_history(models.Model):
 class Ranking_summary(models.Model):
     id = models.BigIntegerField(primary_key=True)
     ranking_id = models.ForeignKey(Ranking, on_delete=models.CASCADE)
-    user_id = models.ForeignKey(Users, on_delete=models.CASCADE)
+    user_id = models.ForeignKey("User.Users"  , on_delete=models.CASCADE)
     amount = models.DecimalField(max_digits=15, decimal_places=0)
     target_date = models.DateField(auto_now_add=True)
     created_at = models.DateTimeField(auto_now_add = True)
     updated_at = models.DateTimeField(auto_now = True)
 
 class Additional_profile_item(models.Model):
-    Additional_profile_item_id = models.IntegerField(primary_key=True)
+    additional_profile_item_id = models.IntegerField(primary_key=True)
     name = models.CharField(max_length=255)
     display_order = models.SmallIntegerField()
     created_at = models.DateTimeField(auto_now_add = True)
@@ -191,7 +188,7 @@ class Device_token(models.Model):
 
 class Related_link(models.Model) :
     id = models.IntegerField(primary_key=True)
-    client_id = models.ForeignKey(Clients, on_delete=models.CASCADE)
+    client_id = models.ForeignKey("User.Clients", on_delete=models.CASCADE)
     title = models.CharField(max_length=255)
     link_url = models.CharField(max_length=255)
     file_name = models.CharField(max_length=255)

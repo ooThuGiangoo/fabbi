@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'Livestream',
     'demo',
     'Event',
+    'MasterData',
 ]
 
 MIDDLEWARE = [
