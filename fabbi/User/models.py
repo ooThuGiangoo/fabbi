@@ -3,7 +3,7 @@ from django.db.models.base import Model
 from django.db.models.deletion import CASCADE
 from MasterData.models import Box_notification_trans_content
 from MasterData.models import Additional_profile_item
-
+from Event.models import Event
 # Create your models here.
 class Client(models.Model):
     choice_archive = (
@@ -75,7 +75,7 @@ class User(models.Model):
     is_date_of_birth_public = models.SmallIntegerField(null=False, choices=choice_sex_public, default=1)
     phone = models.CharField(max_length=45, null=True)
     zip_code = models.CharField(max_length=8, null=True)
-    prefecture_id = models.ForeignKey("MasterData.Prefectures", max_length=11,on_delete=models.SET_NULL, null=True)
+    prefecture_id = models.ForeignKey("MasterData.Prefectures", max_length=11,on_delete=models.SET_NULL, null=True, blank=True)
     city = models.CharField(max_length=255, null=True)
     subsequent_address = models.CharField(max_length=255, null=True)
     biography = models.TextField(null=True)
@@ -96,15 +96,25 @@ class User(models.Model):
             
 class Image_path(models.Model):
     id = models.AutoField(primary_key=True, null=False)
-    user_id = models.ForeignKey(User, on_delete = models.SET_NULL, null=True)
-    client_id = models.ForeignKey(Client, on_delete = models.SET_NULL, null=True)
-    box_notification_trans_content_id = models.ForeignKey(Box_notification_trans_content, on_delete = models.SET_NULL, null=True)
+    user_id = models.ForeignKey(User, on_delete = models.SET_NULL, blank = True, null=True)
+    event_id = models.ForeignKey(Event, related_name="event_id1", on_delete = models.SET_NULL, null=True, blank=True)
+    box_notification_trans_content_id = models.ForeignKey(Box_notification_trans_content, on_delete = models.SET_NULL, null=True, blank = True
+    )
     file_name = models.CharField(max_length=255, null=False)
     dir_path = models.CharField(max_length=255, null=False)
     image_url = models.CharField(max_length=255)
     display_order = models.SmallIntegerField(null=False)
     created_at = models.DateTimeField(null=False, auto_now_add = True)
     updated_at = models.DateTimeField(null=False, auto_now = True)
+
+    def save(self, *args, **kwargs):
+        self.image_url = self.file_name + '/' + self.dir_path
+        super(Image_path, self).save(*args, **kwargs)
+
+    # def update(self, instance, validated_data):                                                     
+    #   if 'image_url' in validated_data:                                                              
+    #       del validated_data['image_url']                                                            
+    #   return super().update(instance, validated_data)
 
     def __str__(self):
         return self.file_name
@@ -141,7 +151,7 @@ class Mgmt_portal_user(models.Model):
         (0 , 'Not archived'),
         (1 , 'Archived'))    
     mgmt_portal_user_id = models.AutoField(primary_key=True)     
-    client_id = models.ForeignKey(Client, on_delete=models.SET_NULL, null=True)
+    client_id = models.ForeignKey(Client, on_delete=models.SET_NULL, null=True, blank=True)
     user_type = models.IntegerField(choices= choice_user_type, default = 1) 
     email = models.CharField(max_length=254)
     password = models.CharField(max_length=255)

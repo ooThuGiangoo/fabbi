@@ -10,7 +10,7 @@ class User_point(models.Model) :
         (2 , 'Exchange for a ticket'))
     choice_deposit = (
         (1 , 'Purchase'),)
-    user_point_id = models.IntegerField(primary_key=True)
+    user_point_id = models.AutoField(primary_key=True)
     user_id = models.ForeignKey("User.User", on_delete=models.CASCADE)
     type = models.IntegerField(choices=choice_type, default = 1)
     deposit_reason = models.IntegerField(null = True, choices=choice_deposit)        
@@ -22,7 +22,7 @@ class User_point(models.Model) :
     updated_at = models.DateTimeField(null=False, auto_now = True)
 
 class Points_package(models.Model):
-    points_package_id = models.IntegerField(primary_key=True)
+    points_package_id = models.AutoField(primary_key=True)
     client_id = models.ForeignKey("User.Client", on_delete=models.CASCADE)
     apple_product_id = models.CharField(max_length=255, null=True)
     google_product_id = models.CharField(max_length=255, null=True)
@@ -38,7 +38,7 @@ class Points_package(models.Model):
 
 
 class Points_package_history(models.Model):
-    id = models.IntegerField(primary_key=True)
+    id = models.AutoField(primary_key=True)
     user_point_id = models.ForeignKey(User_point, on_delete=models.CASCADE)
     points_package_id = models.ForeignKey(Points_package, on_delete=models.CASCADE)
     payment_amount = models.DecimalField(max_digits=15, decimal_places=0)
@@ -52,7 +52,7 @@ class Points_package_history(models.Model):
 
 
 class Point_spending_history(models.Model):
-    id = models.IntegerField(primary_key=True)
+    id = models.AutoField(primary_key=True)
     user_point_id = models.ForeignKey(User_point, on_delete=models.CASCADE)
     user_gift_id = models.ForeignKey("Point.User_gift", on_delete=models.CASCADE)
     spent_at = models.DateTimeField(null=False, auto_now_add = True)
@@ -69,7 +69,7 @@ class User_stamp(models.Model) :
         (2 , 'Application of a stamp code'  ) ) 
     choice_withdrawal =(
         (1 ,'Exchange for a ticket'),)
-    user_stamp_id = models.IntegerField(primary_key=True) 
+    user_stamp_id = models.AutoField(primary_key=True) 
     user_id = models.ForeignKey("User.User", on_delete=models.CASCADE)
     type = models.IntegerField(default = 1, choices=choice_type)
     deposit_reason = models.IntegerField(null = True, choices=choice_deposit)        
@@ -82,7 +82,7 @@ class User_stamp(models.Model) :
 
 
 class Gift(models.Model) :
-    gift_id = models.IntegerField(primary_key=True)
+    gift_id = models.AutoField(primary_key=True)
     client_id = models.ForeignKey("User.Client", on_delete= models.CASCADE)
     name = models.CharField(max_length=255)
     points_spent = models.DecimalField(max_digits=15, decimal_places=0)
@@ -98,7 +98,7 @@ class User_gift(models.Model):
     choice_status= (
         (0 , 'Unused'),
         (1 , 'Used'))
-    user_gift_id = models.IntegerField(primary_key=True)
+    user_gift_id = models.AutoField(primary_key=True)
     user_id = models.ForeignKey("User.User", on_delete=models.CASCADE)
     gift_id = models.ForeignKey(Gift, on_delete=models.CASCADE)
     status = models.IntegerField(choices= choice_status, default = 1)
@@ -108,7 +108,7 @@ class User_gift(models.Model):
 
 
 class Gift_purchase_history (models.Model):
-    id = models.IntegerField(primary_key=True)
+    id = models.AutoField(primary_key=True)
     user_gift_id = models.ForeignKey(User_gift, on_delete=models.CASCADE)
     user_point_id = models.ForeignKey("Point.User_point", on_delete=models.CASCADE)
     points_spent = models.DecimalField(max_digits=15, decimal_places=0)
@@ -117,7 +117,7 @@ class Gift_purchase_history (models.Model):
     updated_at = models.DateTimeField(null=False, auto_now = True)    
 
 class Gift_tipping_history(models.Model) :
-    id = models.IntegerField(primary_key=True)
+    id = models.AutoField(primary_key=True)
     user_gift_id = models.ForeignKey(User_gift, on_delete=models.CASCADE)
     to_user_id = models.ForeignKey("MasterData.Box_notification_trans_content", on_delete=models.CASCADE)
     points_equivalent = models.DecimalField(max_digits=15, decimal_places=0)
@@ -126,7 +126,7 @@ class Gift_tipping_history(models.Model) :
     updated_at = models.DateTimeField(null=False, auto_now = True)    
 
 class Stamps_code(models.Model):
-    stamp_code_id = models.IntegerField(primary_key=True)
+    stamp_code_id = models.AutoField(primary_key=True)
     client_id = models.ForeignKey("User.Client", on_delete=models.CASCADE)
     name = models.CharField(max_length=255)
     code = models.CharField(max_length=6)

@@ -97,7 +97,7 @@ class Push_notification(models.Model):
 
 class Sent_relation(models.Model):
     id = models.AutoField(primary_key=True)
-    event_id = models,IntegerField(null=True)
+    event_id = models.IntegerField(null=True)
     live_stream_id = models.IntegerField(null=True)
     email_notification_trans_content_id  = models.IntegerField(null=True)
     push_notification_trans_content_id  = models.IntegerField(null=True)
@@ -204,7 +204,7 @@ class Email_notification_trans_content(models.Model):
         (0, 'Not delivered'),
         (1, 'Delivered')
     )
-    email_notification_trans_content_id = models.IntegerField(primary_key=True)
+    email_notification_trans_content_id = models.AutoField(primary_key=True)
     client_id = models.ForeignKey("User.Client", on_delete=models.CASCADE)
     title = models.CharField(max_length=255)
     body = models.TextField()
@@ -224,7 +224,7 @@ class Email_notification(models.Model) :
         (1, 'Sent'),
         (2, 'Error')
     )
-    id = models.BigIntegerField(primary_key=True)
+    id = models.BigAutoField(primary_key=True)
     to_email = models.CharField(max_length=254)
     title = models.CharField(max_length=254)
     body = models.TextField()
@@ -246,7 +246,7 @@ class Box_notification_trans_content(models.Model) :
     choice_deliver = (
         (0 , 'Not delivered'),
         (1 , 'Delivered') )
-    box_notification_trans_content_id = models.IntegerField(primary_key= True)
+    box_notification_trans_content_id = models.AutoField(primary_key= True)
     client_id = models.ForeignKey("User.Client", on_delete=models.CASCADE)
     from_type = models.IntegerField(choices=choice_type, default=1)
     from_user_id = models.IntegerField(null=True)
@@ -266,7 +266,7 @@ class Box_notification_master_content (models.Model):
     choice_timing = (
         (99, 'Any timing'),
     )
-    box_notification_master_content_id = models.IntegerField(primary_key=True)
+    box_notification_master_content_id = models.AutoField(primary_key=True)
     client_id = models.ForeignKey("User.Client", on_delete=models.CASCADE)
     timing_type = models.SmallIntegerField(choices=choice_timing, default=99)
     title = models.CharField(max_length=255)
@@ -284,10 +284,10 @@ class Box_notification(models.Model):
         (0, 'Not read'),
         (1, 'Read')
     )
-    id = models.IntegerField(primary_key=True)
+    id = models.AutoField(primary_key=True)
     user_id = models.ForeignKey("User.User", on_delete=models.CASCADE) 
-    box_notification_master_content_id = models.ForeignKey(Box_notification_master_content, on_delete=models.SET_NULL, null=True) 
-    box_notification_trans_content_id = models.ForeignKey(Box_notification_trans_content, on_delete=models.SET_NULL, null=True) 
+    box_notification_master_content_id = models.ForeignKey(Box_notification_master_content, on_delete=models.SET_NULL,blank=True, null=True) 
+    box_notification_trans_content_id = models.ForeignKey(Box_notification_trans_content, on_delete=models.SET_NULL,blank =True, null=True) 
     is_read = models.SmallIntegerField(choices=choice_read, default=1)
     read_at = models.DateTimeField(auto_now_add = True, null=True)
     created_at = models.DateTimeField(auto_now_add = True)
@@ -298,7 +298,7 @@ class Prefectures(models.Model):
     choice_default = (
         (0 , 'Not default'),
         (1 , 'Default') )
-    prefecture_id = models.IntegerField(primary_key=True)
+    prefecture_id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=45, null=False)
     display_order = models.SmallIntegerField(null=False)
     is_default = models.SmallIntegerField(null=False, choices=choice_default)

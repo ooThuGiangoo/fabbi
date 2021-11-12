@@ -4,10 +4,12 @@ from . import views
 
 app_name = 'event_app'
 router = DefaultRouter()
-router.register('Event', views.EventViewSet,'eventrouter')
+router.register('event', views.EventViewSet,'eventrouter')
 
 
 
 urlpatterns = [
     path('', include(router.urls)),
+    path('eventt', views.EventAPIView.as_view()),
+    path('eventt/<int:pk>', views.DetailEvent.as_view())
 ]

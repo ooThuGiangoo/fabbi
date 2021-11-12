@@ -14,7 +14,7 @@ class Live_stream(models.Model) :
     choice_available = (
         (0 ,"Not available"),
         (1 ,'Available'))    
-    live_stream = models.IntegerField(primary_key= True)
+    live_stream = models.AutoField(primary_key= True)
     ivs_arn = models.CharField(null=True, max_length=255)
     status = models.SmallIntegerField(choices=choice_status)
     host_user_id = models.IntegerField()
@@ -45,7 +45,7 @@ class Live_stream(models.Model) :
         return self.live_stream
 
 class Live_stream_viewer(models.Model) :
-    live_stream_id = models.IntegerField(primary_key=True)       
+    live_stream_id = models.AutoField(primary_key=True)       
     user_id = models.ForeignKey(User, on_delete=models.CASCADE)       
     viewed_at = models.DateTimeField(auto_now_add=True)
     created_at = models.DateTimeField(auto_now_add=True)

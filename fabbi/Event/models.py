@@ -3,7 +3,7 @@ from django.db.models.base import Model
 from django.db.models.fields import SmallIntegerField
 
 # Create your models here.
-class Events(models.Model) : 
+class Event(models.Model) : 
     choice_type = (
         (1 , 'Live stream event'),
         (2 , 'Office event'))
@@ -13,7 +13,7 @@ class Events(models.Model) :
     choice_archive = (
         (0 , 'Not archived'),
         (1 , 'Archived'))
-    event_id = models.IntegerField(primary_key=True)
+    event_id = models.AutoField(primary_key=True)
     client_id = models.ForeignKey("User.Client", on_delete=models.CASCADE)
     type = models.IntegerField(choices = choice_type)
     title = models.CharField(max_length=255)
@@ -28,20 +28,19 @@ class Events(models.Model) :
         return self.title
 
 class Event_authorized_user(models.Model):
-    event_id = models.IntegerField(primary_key=True)
+    event_id = models.AutoField(primary_key=True)
     user_id = models.ForeignKey("User.User", on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add = True)
     updated_at = models.DateTimeField(auto_now = True)
     
-
 
 class Performance(models.Model) :
     choice_ticket = (
         (0, 'Not available'),
         (1, 'Available')
     )
-    performance_id = models.IntegerField(primary_key=True)
-    event_id = models.ForeignKey(Events, on_delete=models.CASCADE)
+    performance_id = models.AutoField(primary_key=True)
+    event_id = models.ForeignKey(Event, on_delete=models.CASCADE, related_name='performance')
     streaming_method = models.SmallIntegerField(null = True)
     name = models.CharField(max_length=255)
     start_datetime = models.DateTimeField(auto_now_add=True)
@@ -71,7 +70,7 @@ class Ticket(models.Model) :
         (0, 'Not assigned'),
         (1, 'Assigned')
     )
-    ticket_id = models.IntegerField(primary_key=True)
+    ticket_id = models.AutoField(primary_key=True)
     performance_id = models.ForeignKey(Performance, on_delete= models.CASCADE)
     name = models.CharField(max_length=255)
     price = models.DecimalField(max_digits=15, decimal_places=0, null=True)
@@ -160,7 +159,7 @@ class Drawing (models.Model):
         (0, 'Not purchased'),
         (1, 'Purchased')
     )
-    ticket_id = models.IntegerField(primary_key=True)
+    ticket_id = models.AutoField(primary_key=True)
     user_id = models.ForeignKey("User.User", on_delete=models.CASCADE)
     is_elected = models.SmallIntegerField(choices=choice_elect, default=1)
     is_purchased = models.SmallIntegerField(choices=choice_purchase, default=1)
